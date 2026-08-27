@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 
 export default function Login() {
   const router = useRouter();
@@ -12,6 +13,13 @@ export default function Login() {
 
   // const [loading,setLoading]=useState(false);
   // const [error,setError]=useState("");
+
+
+  const handleGoogleLogin = async () => {
+    await signIn("google", {
+      callbackUrl: "/",
+    });
+  };
 
   const handleLogin = async () => {
     // if(!email || !password)
@@ -125,7 +133,7 @@ export default function Login() {
             </label>
           </div>
 
-        
+
           <Link
             href="/forgot-password"
             className="hover:underline text-blue-700 "
@@ -157,7 +165,7 @@ export default function Login() {
         </div>
 
 
-        <button className="w-full text-black bg-gray-300 font-bold py-3 rounded-md hover:bg-gray-800 transition">
+        <button onClick={handleGoogleLogin} className="w-full text-black bg-gray-300 font-bold py-3 rounded-md hover:bg-gray-800 transition">
           {/* {loading ? "Logging in..." : "Login"} */}
           Continue with Google
         </button>

@@ -27,6 +27,8 @@
 
 import { NextResponse } from "next/server";
 import pool from "@/lib/db";
+import fs from "fs/promises";
+import path from "path";
 export async function GET(request: Request) {
   try {
 
@@ -137,30 +139,30 @@ export async function POST(req: Request) {
 }
 
 
-export async function PUT(req: Request) {
-  try {
-    const body = await req.json();
+// export async function PUT(req: Request) {
+//   try {
+//     const body = await req.json();
 
-    const { id, price } = body;
+//     const { id, price,image } = body;
 
-    await pool.query(
-      "UPDATE product_schema SET price=? WHERE id=?",
-      [price, id]
-    );
+//     await pool.query(
+//       "UPDATE product_schema SET price=?,image=? WHERE id=?",
+//       [price,image, id]
+//     );
 
-    return NextResponse.json({
-      success: true,
-      message: "Price updated",
-    });
-  } catch (error) {
-    console.log(error);
+//     return NextResponse.json({
+//       success: true,
+//       message: "Image and price updated",
+//     });
+//   } catch (error) {
+//     console.log(error);
 
-    return NextResponse.json({
-      success: false,
-      message: "Update failed",
-    });
-  }
-}
+//     return NextResponse.json({
+//       success: false,
+//       message: "Update failed",
+//     });
+//   }
+// }
 
 export async function DELETE(req: Request) {
   try {
@@ -188,3 +190,113 @@ export async function DELETE(req: Request) {
   }
 }
 
+
+
+
+
+
+export async function PUT(req: Request) {
+    try {
+        const formData = await req.formData();
+
+        const id = formData.get("id") as string;
+        const title = formData.get("title") as string;
+        const description = formData.get("description") as string;
+        const price = formData.get("price") as string;
+        const category = formData.get("category") as string;
+        const stock = formData.get("stock") as string;
+
+        const imageFile = formData.get("image") as File | null;
+
+        let imagePath = null;
+
+        // Agar new image select ki hai
+        if (imageFile && imageFile.size > 0) {
+
+            const bytes = await imageFile.arrayBuffer();
+            const buffer = Buffer.from(bytes);
+
+            const extension = imageFile.name.split(".").pop();
+
+            const fileName = `product-${id}-${Date.now()}.${extension}`;
+
+            const uploadDir = path.join(
+                process.cwd(),
+                "public",
+                "products"
+            );
+
+            await fs.mkdir(uploadDir, { recursive: true });
+
+            const filePath = path.join(uploadDir, fileName);
+
+            await fs.writeFile(filePath, buffer);
+
+            imagePath = `/products/${fileName}`;
+        }
+
+        // Image change hui hai
+        if (imagePath) {
+
+            await pool.query(
+                `UPDATE product_schema
+                 SET title=?,
+                     description=?,
+                     price=?,
+                     category=?,
+                     stock=?,
+                     image=?
+                 WHERE id=?`,
+                [
+                    title,
+                    description,
+                    price,
+                    category,
+                    stock,
+                    imagePath,
+                    id
+                ]
+            );
+
+        } else {
+
+            // Image change nahi hui
+            await pool.query(
+                `UPDATE product_schema
+                 SET title=?,
+                     description=?,
+                     price=?,
+                     category=?,
+                     stock=?
+                 WHERE id=?`,
+                [
+                    title,
+                    description,
+                    price,
+                    category,
+                    stock,
+                    id
+                ]
+            );
+        }
+
+        return NextResponse.json({
+            success: true,
+            message: "Product updated successfully",
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        return NextResponse.json(
+            {
+                success: false,
+                message: "Update failed",
+            },
+            {
+                status: 500,
+            }
+        );
+    }
+}

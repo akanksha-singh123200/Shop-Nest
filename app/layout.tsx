@@ -1,17 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// import { } from "next/font/google";
+import { Poppins, Playfair_Display} from "next/font/google";
 import "./globals.css";
+import Providers from "@/components/SessionProvider";
 
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+
+const poppins = Poppins({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-poppins",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const playfair = Playfair_Display({
   subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-playfair",
 });
+
 
 export const metadata: Metadata = {
   title: "QuickCart",
@@ -26,13 +32,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${poppins.variable}  ${playfair.variable} font-poppins`}
     >
       <body className="min-h-full flex flex-col">
        
+        <Providers>
+           {children}
 
+        </Providers>
 
-        {children}
+       
 
       
         </body>

@@ -2,23 +2,24 @@
 
 export default function WhyChooseUs() {
   return (
-    <section className=" min-h-screen  py-16 px-4">
-      {/* Heading */}
-      <div className="text-center mb-12">
-        <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
-          Why Choose Us?
-        </h2>
+    <section className=" min-h-screen px-10 py-15 bg-[#fff8f3] ">
+      <div className="space-y-10">
+        {/* Heading */}
+        <div className=" text-center">
+          <h2 className="font-playfair text-4xl md:text-5xl font-bold text-gray-900">
+            Why Choose Us ?
+          </h2>
 
-        <p className="text-gray-500 mt-3 text-lg">
-          We make your shopping experience simple, secure and enjoyable.
-        </p>
-      </div>
+          <p className="text-gray-500 mt-3 text-lg">
+            We make your shopping experience simple, secure and enjoyable.
+          </p>
+        </div>
 
-      {/* Cards */}
-      <div className="mx-auto max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        
+        {/* Cards */}
+      <div className="mx-auto max-w-7xl  grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
         {/* Fast Delivery */}
-        <div className="bg-gray-100 p-8 rounded-2xl text-center hover:shadow-lg transition duration-300">
+        <div className="p-8 bg-[#E39F7F]/45 rounded-2xl text-center hover:shadow-lg transition duration-300">
           <div className="w-16 h-16 mx-auto rounded-full bg-white flex items-center justify-center mb-5">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -46,7 +47,7 @@ export default function WhyChooseUs() {
         </div>
 
         {/* Secure Payments */}
-        <div className="bg-gray-100 p-8 rounded-2xl text-center hover:shadow-lg transition duration-300">
+        <div className="bg-[#E39F7F]/45 p-8 rounded-2xl text-center hover:shadow-lg transition duration-300">
           <div className="w-16 h-16 mx-auto rounded-full bg-white flex items-center justify-center mb-5">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -74,7 +75,7 @@ export default function WhyChooseUs() {
         </div>
 
         {/* Quality Products */}
-        <div className="bg-gray-100 p-8 rounded-2xl text-center hover:shadow-lg transition duration-300">
+        <div className="bg-[#E39F7F]/45 p-8 rounded-2xl text-center hover:shadow-lg transition duration-300">
           <div className="w-16 h-16 mx-auto rounded-full bg-white flex items-center justify-center mb-5">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -102,7 +103,7 @@ export default function WhyChooseUs() {
         </div>
 
         {/* 24/7 Support */}
-        <div className="bg-gray-100 p-8 rounded-2xl text-center hover:shadow-lg transition duration-300">
+        <div className="bg-[#E39F7F]/45 p-8 rounded-2xl text-center hover:shadow-lg transition duration-300">
           <div className="w-16 h-16 mx-auto rounded-full bg-white flex items-center justify-center mb-5">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -130,6 +131,11 @@ export default function WhyChooseUs() {
         </div>
 
       </div>
+
+
+      </div>
+
+      
     </section>
   );
 }

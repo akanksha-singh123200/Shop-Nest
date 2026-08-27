@@ -53,32 +53,56 @@ export default function Wishlist() {
   }, []);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-5">Wishlist</h1>
+  <div className="min-h-screen bg-[#fff8f3] items-center flex py-10">
+    <div className="max-w-7xl mx-auto px-6">
 
-      {wishlist.map((item: any) => (
-        <div
-          key={item.wishlist_id}
-          className="border p-4 mb-4 rounded shadow"
-        >
-          <img
-            src={item.image}
-            alt={item.title}
-            className="w-40 h-40 object-cover"
-          />
+      <h1 className="text-3xl font-bold mb-8 text-gray-800">
+        My Wishlist ❤️
+      </h1>
 
-          <h2 className="font-bold">{item.title}</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
-          <p>₹ {item.price}</p>
+        {wishlist.map((item: any) => (
 
-          <button
-            onClick={() => removeItem(item.product_id)}
-            className="bg-red-500 text-black px-4 py-2 rounded mt-2"
+          <div
+            key={item.wishlist_id}
+            className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition"
           >
-            Delete
-          </button>
-        </div>
-      ))}
+
+            <div className="w-full h-52 bg-gray-100">
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            <div className="p-5">
+
+              <h2 className="font-semibold text-lg text-gray-800 truncate">
+                {item.title}
+              </h2>
+
+              <p className="text-xl font-bold text-[#F06A55] mt-2">
+                ₹ {item.price}
+              </p>
+
+              <button
+                onClick={() => removeItem(item.product_id)}
+                className="w-full bg-[#E39F7F] text-white px-4 py-2.5 rounded-lg mt-4 hover:bg-red-600 transition"
+              >
+                Remove
+              </button>
+
+            </div>
+
+          </div>
+
+        ))}
+
+      </div>
+
     </div>
-  );
+  </div>
+);
 }
