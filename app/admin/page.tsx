@@ -1,8 +1,18 @@
 import Image from "next/image";
+import AdminNavbar from "@/components/AdminNavbar";
 export default function Admin() {
   return (
     <div>
-      Product Details
+      <AdminNavbar/>
+
+
+
+
+
+
+      {/* Admin dashboard */}
+
+      
     </div>
   );
 }

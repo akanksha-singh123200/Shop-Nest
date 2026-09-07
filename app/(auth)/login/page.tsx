@@ -17,27 +17,22 @@ export default function Login() {
 
   const handleGoogleLogin = async () => {
     await signIn("google", {
-      callbackUrl: "/",
+      callbackUrl: "/customer",
     });
   };
 
   const handleLogin = async () => {
-    // if(!email || !password)
-    // {
-    //   alert("Please fill all the fields");
+    if (!rememberMe) {
+      alert("Please select Remember me before signing in");
+      return;
+    }
+    // const emailPattern = /^[A-Za-z]{5}[0-9]{5}@gmail\.com$/;
+    // if (!emailPattern.test(email)) {
+    //   alert("Email must be in this format :- abcde12345@gmail.com");
     //   return;
     // }
-    // if(password.length < 6)
-    // {
-    //   alert("Password is too short may have 6 chararcter");
-    //   return;
-    // }
-    // if(!email.includes("@")){
-    //   alert("Invalid email");
-    //   return;
-    // }
-    //   setError("");
     // setLoading(true);
+
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
@@ -48,23 +43,22 @@ export default function Login() {
         password,
       }),
     });
+
     setEmail("");
     setPassword("");
+
     const data = await response.json();
-    // setLoading(false);
+
     console.log(data.message);
+
     if (data.success) {
       alert(data.message);
-
       setRememberMe(false);
-
-      router.push("/");
+      router.push("/customer");
     } else {
       alert(data.message);
     }
-
-
-  }
+  };
   return (
     <div id="login" className="min-h-screen flex items-center justify-center">
 

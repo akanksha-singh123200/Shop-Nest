@@ -13,24 +13,35 @@ export default function Signup() {
     const router = useRouter();
 
     const handleSignup = async () => {
-        // setError("");
-        // setLoading(true);
+        setError("");
+        setLoading(true);
         // // Empty fields
-        // if(!name || !email || !password || !confirmPassword){
-        //     alert("Please fill all the fields");
-        //     return;
-        // }
-        // //Password Lenght Check
-        // if(password.length < 6 ){
-        //     alert("Password Length may have 6 Charaters");
-        //     return;
-        // }
-        // //compare Password and confirm password
-        // if(password !== confirmPassword){
-        //     alert("Doesn't have the same value. Please write the same password as confirm password");
-        //     return;
-        // }
-        // //invalid email check using includes
+        if(!name || !email || !password || !confirmPassword){
+            alert("Please fill all the fields");
+            return;
+        }
+        //Password Lenght Check
+        if(password.length < 6 ){
+            alert("Password Length may have 6 Charaters");
+            return;
+        }
+        //compare Password and confirm password
+        if(password !== confirmPassword){
+            alert("Doesn't have the same value. Please write the same password as confirm password");
+            return;
+        }
+
+        const emailPattern = /^[A-Za-z]{5}[0-9]{5}@gmail\.com$/;
+        if (!emailPattern.test(email)){
+            alert("Email must be in this format :- abcde12345@gmail.com");
+            return;
+        }
+        setLoading(true);
+
+
+
+
+        //invalid email check using includes
         // if(!email.includes("@")){
         //     alert("Invalid email");
         //     return

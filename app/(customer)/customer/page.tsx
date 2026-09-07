@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 // import Products from "@/components/Products";
 import Navbar from "@/components/Navbar";
-import LogoutButton from "@/components/LogoutButton";
+// import LogoutButton from "@/components/LogoutButton";
 // import TrendingProducts from "@/components/TrendingProducts";
 import SpecialOffers from "@/components/SpecialOffers";
 import WhyChooseUs from "@/components/WhyChooseus";
@@ -12,9 +12,9 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 import BackToTop from "@/components/BackToTop";
 // import Products from "./(customer)/products/page";
-import Products from "./products/page";
+import Products from "../products/page";
 // import Trending from "./(customer)/trendings/page";
-import Trending from "./trendings/page";
+import Trending from "../trendings/page";
 
 export default async function Customer() {
   const cookieStore = await cookies();
@@ -64,7 +64,7 @@ export default async function Customer() {
 
 
 
-      <LogoutButton />
+     
 
       {/* Hero Section */}
       <section

@@ -1,7 +1,9 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import AdminNavbar from "@/components/AdminNavbar";
 
 export default function Trending() {
   const [products, setProducts] = useState<any[]>([]);
@@ -45,7 +47,6 @@ export default function Trending() {
       alert(data.message);
 
       if (data.success) {
-        // Products dobara fetch karenge
         fetchProducts();
       }
     } catch (error) {
@@ -90,181 +91,249 @@ export default function Trending() {
   // --------------------------------
   if (loading) {
     return (
-      <section className="min-h-screen bg-[#fff8f3] px-4 py-16">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="text-center font-playfair text-4xl font-bold text-gray-900 md:text-5xl">
-            Trending Products
-          </h2>
+      <>
+        <AdminNavbar />
 
-          <p className="mt-4 text-center text-gray-500">
-            Loading products...
-          </p>
+        <section className="ml-64 min-h-screen bg-[#fff8f3] px-6 py-12">
+          <div className="mx-auto max-w-7xl">
+            <h2 className="text-center text-4xl font-bold text-gray-900">
+              Trending Products
+            </h2>
 
-          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {[1, 2, 3, 4].map((item) => (
-              <div
-                key={item}
-                className="h-130 animate-pulse rounded-3xl bg-white shadow-sm"
-              />
-            ))}
+            <p className="mt-3 text-center text-gray-500">
+              Loading products...
+            </p>
+
+            <div className="mt-10 overflow-hidden rounded-2xl bg-white shadow-sm">
+              <div className="h-16 animate-pulse bg-gray-100" />
+
+              {[1, 2, 3, 4, 5].map((item) => (
+                <div
+                  key={item}
+                  className="h-20 animate-pulse border-t border-gray-100 bg-white"
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </>
     );
   }
 
   return (
-    <section className="min-h-screen bg-[#fff8f3] px-4 py-12 md:px-8 md:py-16">
-      <div className="mx-auto max-w-7xl">
+    <>
+      <AdminNavbar />
 
-        {/* Header */}
-        <div className="mb-10 text-center md:mb-12">
-          <span className="mb-3 inline-block rounded-full bg-[#E39F7F]/10 px-4 py-1.5 text-sm font-medium text-[#d98968]">
-            ✨ Our Collection
-          </span>
+      <section className="ml-64 min-h-screen px-6 py-22 md:px-8 md:py-27">
+        <div className="mx-auto max-w-7xl">
 
-          <h2 className="font-playfair text-4xl font-bold text-gray-900 md:text-5xl">
-            Trending Products
-          </h2>
+          {/* Header */}
+          <div className="mb-5">
+            <h2 className="text-3xl  md:text-3xl font-bold">
+              Trendings
+            </h2>
 
-          <p className="mx-auto mt-3 max-w-xl text-sm text-gray-500 md:text-base">
-            Manage your trending products and choose which products should
-            appear in the trending collection.
-          </p>
-        </div>
-
-        {/* Products Grid */}
-        {products.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {products.map((item) => (
-              <div
-                key={item.id}
-                className="group overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-              >
-
-                {/* Image Section */}
-                <div className="relative m-3 h-64 overflow-hidden rounded-2xl bg-[#f8f8f8]">
-
-                  {/* Trending Badge */}
-                  {item.is_trending === 1 && (
-                    <span className="absolute left-3 top-3 z-10 rounded-full bg-[#E39F7F] px-3 py-1.5 text-xs font-semibold text-white shadow-sm">
-                      ↗ Trending
-                    </span>
-                  )}
-
-                  {/* Image */}
-                  <div className="flex h-full items-center justify-center p-6">
-                    <Image
-                      src={item.image}
-                      width={250}
-                      height={250}
-                      alt={item.title}
-                      className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                </div>
-
-                {/* Product Details */}
-                <div className="px-5 pb-5 pt-2">
-
-                  {/* Product Title */}
-                  <h3 className="min-h-14 line-clamp-2 text-lg font-bold leading-7 text-gray-900">
-                    {item.title}
-                  </h3>
-
-                  {/* Rating */}
-                  <div className="mt-2 flex items-center gap-2">
-                    <span className="text-sm tracking-wide">
-                      ⭐⭐⭐⭐☆
-                    </span>
-
-                    <span className="text-xs text-gray-400">
-                      No reviews
-                    </span>
-                  </div>
-
-                  {/* Price */}
-                  <div className="mt-3 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-gray-400">
-                        Price
-                      </p>
-
-                      <p className="text-2xl font-bold text-gray-900">
-                        ₹{item.price}
-                      </p>
-                    </div>
-
-                    {item.is_trending === 1 && (
-                      <span className="rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-600">
-                        Popular
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="mt-5 space-y-2.5">
-
-                    {/* Add To Trending */}
-                    <button
-                      onClick={() => InsertProductForTrending(item)}
-                      disabled={
-                        item.is_trending === 1 || adding === item.id
-                      }
-                      className={`w-full rounded-xl py-2.5 text-sm font-semibold transition active:scale-[0.98] ${
-                        item.is_trending === 1
-                          ? "cursor-not-allowed bg-gray-200 text-gray-500"
-                          : "bg-[#E39F7F] text-white hover:bg-[#d98968] hover:shadow-md"
-                      }`}
-                    >
-                      {adding === item.id
-                        ? "Adding..."
-                        : item.is_trending === 1
-                        ? "✓ Already Trending"
-                        : "+ Add to Trending"}
-                    </button>
-
-                    {/* Delete + Update */}
-                    <div className="grid grid-cols-2 gap-2.5">
-
-                      <button
-                        className="rounded-xl border border-red-200 bg-red-50 py-2.5 text-sm font-semibold text-red-500 transition hover:bg-red-500 hover:text-white active:scale-[0.98]"
-                      >
-                        Delete
-                      </button>
-
-                      <button
-                        className="rounded-xl border border-blue-200 bg-blue-50 py-2.5 text-sm font-semibold text-blue-500 transition hover:bg-blue-500 hover:text-white active:scale-[0.98]"
-                      >
-                        Update
-                      </button>
-
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+            <p className="mt-2 text-sm text-gray-500">
+              Manage products that are currently trending.
+            </p>
           </div>
-        ) : (
 
-          /* Empty State */
-          <div className="flex min-h-87.5 flex-col items-center justify-center rounded-3xl border border-dashed border-gray-300 bg-white/60 px-6 text-center">
+          {/* Products Table */}
+          {products.length > 0 ? (
+            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#E39F7F]/10 text-3xl">
-              🛍️
+              {/* Table Responsive Wrapper */}
+              <div className="overflow-x-auto">
+
+                <table className="w-full min-w-225 border-collapse">
+
+                  {/* Table Header */}
+                  <thead>
+                    <tr className="border-b border-gray-200 bg-gray-50">
+
+                      <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                        Product
+                      </th>
+
+                      <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                        Price
+                      </th>
+
+                      <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">
+                        Status
+                      </th>
+
+                      <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">
+                        Display Order
+                      </th>
+
+                      <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">
+                        Actions
+                      </th>
+
+                    </tr>
+                  </thead>
+
+                  {/* Table Body */}
+                  <tbody className="divide-y divide-gray-100">
+
+                    {products.map((item, index) => (
+                      <tr
+                        key={item.id}
+                        className="transition hover:bg-gray-50"
+                      >
+
+                        {/* Product */}
+                        <td className="px-6 py-4">
+
+                          <div className="flex items-center gap-4">
+
+                            {/* Image */}
+                            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-[#f8f8f8]">
+
+                              <Image
+                                src={item.image}
+                                width={80}
+                                height={80}
+                                alt={item.title}
+                                className="h-full w-full object-contain p-2"
+                              />
+
+                            </div>
+
+                            {/* Name */}
+                            <div>
+                              <h3 className="max-w-xs truncate text-sm font-semibold text-gray-900">
+                                {item.title}
+                              </h3>
+
+                              <p className="mt-1 text-xs text-gray-400">
+                                Product ID: #{item.id}
+                              </p>
+                            </div>
+
+                          </div>
+
+                        </td>
+
+                        {/* Price */}
+                        <td className="px-6 py-4">
+
+                          <span className="text-base font-bold text-gray-900">
+                            ₹{item.price}
+                          </span>
+
+                        </td>
+
+                        {/* Status */}
+                        <td className="px-6 py-4 text-center">
+
+                          {item.is_trending === 1 ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-600">
+                              <span>↗</span>
+                              Trending
+                            </span>
+                          ) : (
+                            <span className="inline-flex rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-500">
+                              Not Trending
+                            </span>
+                          )}
+
+                        </td>
+
+                        {/* Display Order */}
+                        <td className="px-6 py-4 text-center">
+
+                          {item.is_trending === 1 ? (
+                            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#E39F7F]/10 text-sm font-bold text-[#d98968]">
+                              {item.display_order || index + 1}
+                            </span>
+                          ) : (
+                            <span className="text-sm text-gray-400">
+                              —
+                            </span>
+                          )}
+
+                        </td>
+
+                        {/* Actions */}
+                        <td className="px-6 py-4">
+
+                          <div className="flex items-center justify-center gap-2">
+
+                            {/* Add To Trending */}
+                            <button
+                              onClick={() =>
+                                InsertProductForTrending(item)
+                              }
+                              disabled={
+                                item.is_trending === 1 ||
+                                adding === item.id
+                              }
+                              className={`rounded-lg px-4 py-2 text-xs font-semibold transition active:scale-95 ${
+                                item.is_trending === 1
+                                  ? "cursor-not-allowed bg-gray-100 text-gray-400"
+                                  : "bg-[#E39F7F] text-white hover:bg-[#d98968]"
+                              }`}
+                            >
+                              {adding === item.id
+                                ? "Adding..."
+                                : item.is_trending === 1
+                                  ? "✓ Trending"
+                                  : "+ Add"}
+                            </button>
+
+                            {/* Delete */}
+                            <button
+                              className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-xs font-semibold text-red-500 transition hover:bg-red-500 hover:text-white active:scale-95"
+                            >
+                              Delete
+                            </button>
+
+                            {/* Update */}
+                            <button
+                              className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-500 transition hover:bg-blue-500 hover:text-white active:scale-95"
+                            >
+                              Update
+                            </button>
+
+                          </div>
+
+                        </td>
+
+                      </tr>
+                    ))}
+
+                  </tbody>
+
+                </table>
+
+              </div>
+            </div>
+          ) : (
+
+            /* Empty State */
+            <div className="flex min-h-87.5 flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-white px-6 text-center">
+
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#E39F7F]/10 text-3xl">
+                🛍️
+              </div>
+
+              <h3 className="text-xl font-bold text-gray-800">
+                No Products Found
+              </h3>
+
+              <p className="mt-2 max-w-md text-sm text-gray-500">
+                There are currently no products in your product collection.
+              </p>
+
             </div>
 
-            <h3 className="text-xl font-bold text-gray-800">
-              No Products Found
-            </h3>
+          )}
 
-            <p className="mt-2 max-w-md text-sm text-gray-500">
-              There are currently no products in your product collection.
-            </p>
-
-          </div>
-        )}
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 }
+

@@ -1,13 +1,10 @@
 import Image from "next/image";
-import {
-//   FacebookIcon,
-//   Instagram,
-//  Youtube,
-//   Linkedin,
-} from "lucide-react";
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <footer className="bg-[#fff8f3]">
+      {/* Main Footer */}
       <div className="mx-auto max-w-7xl px-6 py-12 grid md:grid-cols-4 gap-10">
 
         {/* Logo Section */}
@@ -16,11 +13,11 @@ export default function Footer() {
             src="/logo4.png"
             height={160}
             width={160}
-            alt="logo"
+            alt="ShopNest Logo"
           />
 
           <p className="text-black mt-4 text-sm leading-6">
-            Shop Nest is your trusted ecommerce platform for
+            ShopNest is your trusted ecommerce platform for
             shopping quality products with fast delivery and
             secure payments.
           </p>
@@ -33,10 +30,11 @@ export default function Footer() {
           </h2>
 
           <div className="flex flex-col gap-3 text-black">
-            <a href="#">Home</a>
-            <a href="#">Products</a>
-            <a href="#">Categories</a>
-            <a href="#">Cart</a>
+            <Link href="/">Home</Link>
+            <Link href="/products">Products</Link>
+            <Link href="/wishlist">Wishlist</Link>
+            <Link href="/AddtoCart">Cart</Link>
+            <Link href="/Contact">Contact Us</Link>
           </div>
         </div>
 
@@ -47,10 +45,21 @@ export default function Footer() {
           </h2>
 
           <div className="flex flex-col gap-3 text-black">
-            <a href="#">Contact Us</a>
-            <a href="#">FAQs</a>
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms & Conditions</a>
+            <Link href="/faqs">FAQs</Link>
+            <Link href="/privacy-policy">Privacy Policy</Link>
+            <Link href="/terms-and-conditions">
+              Terms & Conditions
+            </Link>
+
+            <Link href="/shipping-and-delivery">
+              Shipping & Delivery
+            </Link>
+
+            <Link href="/return-and-refund">
+              Return & Refund
+            </Link>
+
+            
           </div>
         </div>
 
@@ -60,43 +69,71 @@ export default function Footer() {
             Follow Us
           </h2>
 
-          {/* <div className="flex gap-4">
+          <div className="flex gap-4">
 
+            {/* Facebook */}
             <a
-              href="#"
-              className="bg-white/10 p-3 rounded-full hover:bg-blue-600 transition"
+              href="https://facebook.com"
+              aria-label="Facebook"
+              className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-600 transition"
             >
-              <FacebookIcon size={20} />
+              <Image
+                src="/products/FooterImages/facebook.webp"
+                height={24}
+                width={24}
+                alt="Facebook"
+              />
             </a>
 
+            {/* Instagram */}
             <a
-              href="#"
-              className="bg-white/10 p-3 rounded-full hover:bg-pink-600 transition"
+              href="https://instagram.com"
+              aria-label="Instagram"
+              className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-pink-500 transition"
             >
-              <Instagram size={20} />
+              <Image
+                src="/products/FooterImages/instagram.webp"
+                height={24}
+                width={24}
+                alt="Instagram"
+              />
             </a>
 
+            {/* YouTube */}
             <a
-              href="#"
-              className="bg-white/10 p-3 rounded-full hover:bg-red-600 transition"
+              href="https://youtube.com"
+              aria-label="YouTube"
+              className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-600 transition"
             >
-              <Youtube size={20} />
+              <Image
+                src="/products/FooterImages/youtube.jpg"
+                height={24}
+                width={24}
+                alt="YouTube"
+              />
             </a>
 
+            {/* LinkedIn */}
             <a
               href="#"
-              className="bg-white/10 p-3 rounded-full hover:bg-blue-500 transition"
+              aria-label="https://linkedin.com"
+              className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-500 transition"
             >
-              <Linkedin size={20} />
+              <Image
+                src="/products/FooterImages/linkedin.webp"
+                height={24}
+                width={24}
+                alt="LinkedIn"
+              />
             </a>
 
-          </div> */}
+          </div>
         </div>
       </div>
 
       {/* Bottom Footer */}
-      <div className=" max-w-7xl mx-auto border-t border-gray-800 py-5 text-center text-black text-sm">
-        © 2026 QuickCart. All Rights Reserved.
+      <div className="max-w-7xl mx-auto border-t border-gray-300 py-5 text-center text-black text-sm">
+        © 2026 ShopNest. All Rights Reserved.
       </div>
     </footer>
   );

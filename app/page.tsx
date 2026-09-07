@@ -207,7 +207,7 @@ export default async function Home() {
 
 
 
-      <LogoutButton />
+      {/* <LogoutButton /> */}
 
       {/* Hero Section */}
       <section

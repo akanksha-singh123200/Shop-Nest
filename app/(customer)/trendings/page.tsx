@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -8,6 +9,66 @@ export default function Trending() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [ratings, setRatings] = useState<{
+    [key: number]: {
+      average_rating: number;
+      total_reviews: number;
+    };
+  }>({});
+
+  // =========================
+  // GET PRODUCT RATINGS
+  // =========================
+  const getRatings = async (productList: any[]) => {
+    try {
+      const ratingData: {
+        [key: number]: {
+          average_rating: number;
+          total_reviews: number;
+        };
+      } = {};
+
+      await Promise.all(
+        productList.map(async (product) => {
+          try {
+            const response = await fetch(
+              `/api/reviews/ratings?product_id=${product.id}`
+            );
+
+            if (!response.ok) {
+              console.error(
+                `Rating API Error for product ${product.id}:`,
+                response.status
+              );
+              return;
+            }
+
+            const data = await response.json();
+
+            if (data.success) {
+              ratingData[product.id] = {
+                average_rating: data.average_rating || 0,
+                total_reviews: data.total_reviews || 0,
+              };
+            }
+          } catch (error) {
+            console.log(
+              `Rating Error for product ${product.id}:`,
+              error
+            );
+          }
+        })
+      );
+
+      setRatings(ratingData);
+    } catch (error) {
+      console.log("Ratings Error:", error);
+    }
+  };
+
+  // =========================
+  // GET TRENDING PRODUCTS
+  // =========================
   const fetchProducts = async () => {
     try {
       const response = await fetch("/api/trending", {
@@ -27,6 +88,9 @@ export default function Trending() {
         );
 
         setProducts(trendingProducts);
+
+        // Trending products ki ratings fetch karo
+        getRatings(trendingProducts);
       } else {
         console.error(data.message);
         setProducts([]);
@@ -43,9 +107,9 @@ export default function Trending() {
     fetchProducts();
   }, []);
 
-  // -----------------------------
-  // Loading UI
-  // -----------------------------
+  // =========================
+  // LOADING UI
+  // =========================
   if (loading) {
     return (
       <section className="min-h-screen bg-[#fff8f3] py-16">
@@ -95,71 +159,110 @@ export default function Trending() {
         {/* Products */}
         {products.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {products.map((item) => (
-              <div
-                key={item.id}
-                className="group overflow-hidden rounded-2xl bg-gray-100 p-4 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
-              >
-                {/* Image Area */}
-                <div className="relative h-64 overflow-hidden rounded-xl bg-white p-4">
 
-                  {/* Trending Badge */}
-                  <span className="absolute left-3 top-3 z-10 rounded-full bg-[#E39F7F] px-3 py-1 text-sm font-medium text-white shadow-sm">
-                    ↗ Trending
-                  </span>
+            {products.map((item) => {
 
-                  {/* Product Image */}
-                  <div className="flex h-full items-center justify-center">
-                    <Image
-                      src={item.image}
-                      width={220}
-                      height={220}
-                      alt={item.title || "Product"}
-                      className="h-48 w-full object-contain transition duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                </div>
+              // Current product ki rating
+              const averageRating =
+                ratings[item.id]?.average_rating || 0;
 
-                {/* Product Details */}
-                <div className="pt-4">
+              const totalReviews =
+                ratings[item.id]?.total_reviews || 0;
 
-                  {/* Title */}
-                  <h2 className="line-clamp-2 min-h-14 text-xl font-bold text-gray-900">
-                    {item.title}
-                  </h2>
+              return (
+                <div
+                  key={item.id}
+                  className="group overflow-hidden rounded-2xl bg-gray-100 p-4 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+                >
 
-                  {/* Rating */}
-                  <div className="mt-2 flex items-center gap-2">
-                    <span className="text-lg">
-                      ⭐⭐⭐⭐☆
+                  {/* Image Area */}
+                  <div className="relative h-64 overflow-hidden rounded-xl bg-white p-4">
+
+                    {/* Trending Badge */}
+                    <span className="absolute left-3 top-3 z-10 rounded-full bg-[#E39F7F] px-3 py-1 text-sm font-medium text-white shadow-sm">
+                      ↗ Trending
                     </span>
 
-                    <span className="text-sm text-gray-500">
-                      No reviews
-                    </span>
+                    {/* Product Image */}
+                    <div className="flex h-full items-center justify-center">
+                      <Image
+                        src={item.image}
+                        width={220}
+                        height={220}
+                        alt={item.title || "Product"}
+                        className="h-48 w-full object-contain transition duration-500 group-hover:scale-105"
+                      />
+                    </div>
                   </div>
 
-                  {/* Price */}
-                  <div className="mt-3">
-                    <p className="text-xs text-gray-500">
-                      Price
-                    </p>
+                  {/* Product Details */}
+                  <div className="pt-4">
 
-                    <p className="text-2xl font-bold text-gray-900">
-                      ₹{item.price}
-                    </p>
+                    {/* Title */}
+                    <h2 className="line-clamp-2 min-h-14 text-xl font-bold text-gray-900">
+                      {item.title}
+                    </h2>
+
+                    {/* Rating */}
+                    <div className="mt-2 flex items-center gap-2">
+
+                      <div className="flex">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <span
+                            key={star}
+                            className={
+                              star <= Math.round(averageRating)
+                                ? "text-yellow-400 text-xl"
+                                : "text-gray-300 text-xl"
+                            }
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Average Rating */}
+                      <span className="font-medium">
+                        {averageRating}
+                      </span>
+
+                      {/* Total Reviews */}
+                      {totalReviews > 0 ? (
+                        <span className="text-sm text-gray-500">
+                          ({totalReviews})
+                        </span>
+                      ) : (
+                        <span className="text-sm text-gray-500">
+                          No reviews
+                        </span>
+                      )}
+
+                    </div>
+
+                    {/* Price */}
+                    <div className="mt-3">
+                      <p className="text-xs text-gray-500">
+                        Price
+                      </p>
+
+                      <p className="text-2xl font-bold text-gray-900">
+                        ₹{item.price}
+                      </p>
+                    </div>
+
+                    {/* Buy Now */}
+                    <Link
+                      href={`/products/${item.id}`}
+                      className="mt-4 block w-full rounded-full bg-[#E39F7F] py-3 text-center font-bold text-white transition hover:bg-[#d98968]"
+                    >
+                      Buy Now
+                    </Link>
+
                   </div>
-
-                  {/* Buy Now */}
-                  <Link
-                    href={`/products/${item.id}`}
-                    className="mt-4 block w-full rounded-full bg-[#E39F7F] py-3 text-center font-bold text-white transition hover:bg-[#d98968]"
-                  >
-                    Buy Now
-                  </Link>
                 </div>
-              </div>
-            ))}
+              );
+            })}
+
           </div>
         ) : (
 
@@ -180,7 +283,9 @@ export default function Trending() {
 
           </div>
         )}
+
       </div>
     </section>
   );
 }
+
