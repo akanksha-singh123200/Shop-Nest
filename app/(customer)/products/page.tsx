@@ -46,7 +46,7 @@ function ProductsContent() {
                 productList.map(async (product) => {
                     try {
                         const response = await fetch(
-                            `/api/reviews/ratings?product_id=${product.id}`
+                            `/api/admin/reviews/ratings?product_id=${product.id}`
                         );
 
                         if (!response.ok) {

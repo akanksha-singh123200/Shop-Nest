@@ -1,199 +1,209 @@
-// import { NextResponse } from "next/server";
-// import pool from "@/lib/db";
-
-// export async function GET() {
-//   try {
-//     const [rows] = await pool.query("SELECT 1");
-
-//     return NextResponse.json({
-//       success: true,
-//       message: "Database connected successfully",
-//       rows,
-//     });
-
-//   } catch (error) {
-//     console.error("Database connection error:", error);
-
-//     return NextResponse.json({
-//       success: false,
-//       message: "Database connection failed",
-//       error: error instanceof Error ? error.message : "Unknown error",
-//     });
-//   }
-// }
-
-
-
-
 import { NextResponse } from "next/server";
 import pool from "@/lib/db";
 import fs from "fs/promises";
 import path from "path";
+
+// ========================================
+// GET - Fetch Products
+// ========================================
+
 export async function GET(request: Request) {
-  try {
+    try {
+        const { searchParams } = new URL(request.url);
 
-    const { searchParams } = new URL(request.url);
+        const search = searchParams.get("search");
+        const categorySearch = searchParams.get("categorySearch");
+        const sort = searchParams.get("sort");
 
-    const search = searchParams.get("search");
-    const categorySearch = searchParams.get("categorySearch");
-    const sort = searchParams.get("sort");
+        let products;
 
+        // Search + Category Filter
+        if (search && categorySearch) {
+            [products] = await pool.query(
+                `SELECT * 
+                 FROM product_schema 
+                 WHERE title LIKE ? 
+                 AND category = ?`,
+                [`%${search}%`, categorySearch]
+            );
+        }
 
-    let products;
+        // Search
+        else if (search) {
+            [products] = await pool.query(
+                `SELECT * 
+                 FROM product_schema 
+                 WHERE title LIKE ?`,
+                [`%${search}%`]
+            );
+        }
 
-    console.log(categorySearch);
-    console.log(sort);
+        // Category Filter
+        else if (categorySearch) {
+            [products] = await pool.query(
+                `SELECT * 
+                 FROM product_schema 
+                 WHERE category = ?`,
+                [categorySearch]
+            );
+        }
 
+        // Price Low to High
+        else if (sort === "price_asc") {
+            [products] = await pool.query(
+                `SELECT * 
+                 FROM product_schema 
+                 ORDER BY price ASC`
+            );
+        }
 
-    // Search
-    if (search && categorySearch) {
+        // Price High to Low
+        else if (sort === "price_desc") {
+            [products] = await pool.query(
+                `SELECT * 
+                 FROM product_schema 
+                 ORDER BY price DESC`
+            );
+        }
 
-      [products] = await pool.query(
-        "SELECT * FROM product_schema WHERE title LIKE ?",
-        [`%${search}%`]
-      );
+        // All Products
+        else {
+            [products] = await pool.query(
+                `SELECT * FROM product_schema`
+            );
+        }
 
-      [products] = await pool.query(
-        "SELECT * FROM product_schema WHERE category = ?",
-        [categorySearch]
-      );
+        return NextResponse.json({
+            success: true,
+            products,
+        });
 
+    } catch (error) {
+        console.error("Fetch products error:", error);
+
+        return NextResponse.json(
+            {
+                success: false,
+                message: "Error fetching products",
+            },
+            {
+                status: 500,
+            }
+        );
     }
-
-    // Category Filter
-    else if (categorySearch) {
-
-      [products] = await pool.query(
-        "SELECT * FROM product_schema WHERE category = ?",
-        [categorySearch]
-      );
-
-    }
-    else if (sort==="price_asc") {
-      [products] = await pool.query(
-        "SELECT * FROM product_schema ORDER BY price ASC"
-      );
-    }
-     else if (sort==="price_desc") {
-      [products] = await pool.query(
-        "SELECT * FROM product_schema ORDER BY price DESC"
-      );
-    }
-
-    // All Products
-    else {
-
-      [products] = await pool.query(
-        "SELECT * FROM product_schema"
-      );
-
-    }
-
-    return NextResponse.json({
-      success: true,
-      products,
-    });
-
-  } catch (error) {
-
-    return NextResponse.json({
-      success: false,
-      message: "Error fetching products",
-    });
-
-  }
 }
+
+
+// ========================================
+// POST - Add Product
+// ========================================
 
 export async function POST(req: Request) {
-  try {
-    const body = await req.json();
+    try {
+        // Frontend FormData bhej raha hai
+        const formData = await req.formData();
 
-    const { title, desc, price, category, image, stock } = body;
+        const title = formData.get("title") as string;
+        const description = formData.get("description") as string;
+        const price = formData.get("price") as string;
+        const category = formData.get("category") as string;
+        const stock = formData.get("stock") as string;
 
-    await pool.query(
-      `INSERT INTO product_schema
-      (title, description, price, category, image, stock)
-      VALUES (?, ?, ?, ?, ?, ?)`,
-      [title, desc, price, category, image, stock]
-    );
+        const imageFile = formData.get("image") as File | null;
 
-    const [products]: any = await pool.query(
-      "SELECT * FROM product_schema"
-    );
+        // Validation
+        if (!title || !description || !price || !category || !stock) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Please fill all required fields",
+                },
+                {
+                    status: 400,
+                }
+            );
+        }
 
+        // ========================================
+        // Save Image
+        // ========================================
 
+        let imagePath = "";
 
-    return NextResponse.json({
-      success: true,
-      message: "Product Added Successfully",
-    });
+        if (imageFile && imageFile.size > 0) {
+            const bytes = await imageFile.arrayBuffer();
+            const buffer = Buffer.from(bytes);
 
-  } catch (error) {
-    console.log(error);
+            const extension = imageFile.name.split(".").pop() || "jpg";
 
-    return NextResponse.json({
-      success: false,
-      message: "Something went wrong",
-    });
-  }
+            const fileName = `product-${Date.now()}.${extension}`;
+
+            const uploadDir = path.join(
+                process.cwd(),
+                "public",
+                "products"
+            );
+
+            // Create folder if it doesn't exist
+            await fs.mkdir(uploadDir, {
+                recursive: true,
+            });
+
+            const filePath = path.join(
+                uploadDir,
+                fileName
+            );
+
+            await fs.writeFile(
+                filePath,
+                buffer
+            );
+
+            imagePath = `/products/${fileName}`;
+        }
+
+        // ========================================
+        // Insert Product
+        // ========================================
+
+        await pool.query(
+            `INSERT INTO product_schema
+            (title, description, price, category, image, stock)
+            VALUES (?, ?, ?, ?, ?, ?)`,
+            [
+                title,
+                description,
+                price,
+                category,
+                imagePath,
+                stock,
+            ]
+        );
+
+        return NextResponse.json({
+            success: true,
+            message: "Product Added Successfully",
+        });
+
+    } catch (error) {
+        console.error("Add product error:", error);
+
+        return NextResponse.json(
+            {
+                success: false,
+                message: "Something went wrong while adding product",
+            },
+            {
+                status: 500,
+            }
+        );
+    }
 }
 
 
-// export async function PUT(req: Request) {
-//   try {
-//     const body = await req.json();
-
-//     const { id, price,image } = body;
-
-//     await pool.query(
-//       "UPDATE product_schema SET price=?,image=? WHERE id=?",
-//       [price,image, id]
-//     );
-
-//     return NextResponse.json({
-//       success: true,
-//       message: "Image and price updated",
-//     });
-//   } catch (error) {
-//     console.log(error);
-
-//     return NextResponse.json({
-//       success: false,
-//       message: "Update failed",
-//     });
-//   }
-// }
-
-export async function DELETE(req: Request) {
-  try {
-    const body = await req.json();
-
-    const { id } = body;
-
-    await pool.query(
-      "DELETE FROM product_schema WHERE id=?",
-      [id]
-    );
-
-    return NextResponse.json({
-      success: true,
-      message: "Product Deleted Successfully",
-    });
-
-  } catch (error) {
-    console.log(error);
-
-    return NextResponse.json({
-      success: false,
-      message: "Delete Failed",
-    });
-  }
-}
-
-
-
-
-
+// ========================================
+// PUT - Update Product
+// ========================================
 
 export async function PUT(req: Request) {
     try {
@@ -208,17 +218,21 @@ export async function PUT(req: Request) {
 
         const imageFile = formData.get("image") as File | null;
 
-        let imagePath = null;
+        let imagePath: string | null = null;
 
-        // Agar new image select ki hai
+        // ========================================
+        // New Image
+        // ========================================
+
         if (imageFile && imageFile.size > 0) {
-
             const bytes = await imageFile.arrayBuffer();
             const buffer = Buffer.from(bytes);
 
-            const extension = imageFile.name.split(".").pop();
+            const extension =
+                imageFile.name.split(".").pop() || "jpg";
 
-            const fileName = `product-${id}-${Date.now()}.${extension}`;
+            const fileName =
+                `product-${id}-${Date.now()}.${extension}`;
 
             const uploadDir = path.join(
                 process.cwd(),
@@ -226,27 +240,37 @@ export async function PUT(req: Request) {
                 "products"
             );
 
-            await fs.mkdir(uploadDir, { recursive: true });
+            await fs.mkdir(uploadDir, {
+                recursive: true,
+            });
 
-            const filePath = path.join(uploadDir, fileName);
+            const filePath = path.join(
+                uploadDir,
+                fileName
+            );
 
-            await fs.writeFile(filePath, buffer);
+            await fs.writeFile(
+                filePath,
+                buffer
+            );
 
             imagePath = `/products/${fileName}`;
         }
 
-        // Image change hui hai
-        if (imagePath) {
+        // ========================================
+        // Update with Image
+        // ========================================
 
+        if (imagePath) {
             await pool.query(
                 `UPDATE product_schema
-                 SET title=?,
-                     description=?,
-                     price=?,
-                     category=?,
-                     stock=?,
-                     image=?
-                 WHERE id=?`,
+                 SET title = ?,
+                     description = ?,
+                     price = ?,
+                     category = ?,
+                     stock = ?,
+                     image = ?
+                 WHERE id = ?`,
                 [
                     title,
                     description,
@@ -254,28 +278,31 @@ export async function PUT(req: Request) {
                     category,
                     stock,
                     imagePath,
-                    id
+                    id,
                 ]
             );
+        }
 
-        } else {
+        // ========================================
+        // Update without Image
+        // ========================================
 
-            // Image change nahi hui
+        else {
             await pool.query(
                 `UPDATE product_schema
-                 SET title=?,
-                     description=?,
-                     price=?,
-                     category=?,
-                     stock=?
-                 WHERE id=?`,
+                 SET title = ?,
+                     description = ?,
+                     price = ?,
+                     category = ?,
+                     stock = ?
+                 WHERE id = ?`,
                 [
                     title,
                     description,
                     price,
                     category,
                     stock,
-                    id
+                    id,
                 ]
             );
         }
@@ -286,13 +313,48 @@ export async function PUT(req: Request) {
         });
 
     } catch (error) {
-
-        console.log(error);
+        console.error("Update product error:", error);
 
         return NextResponse.json(
             {
                 success: false,
                 message: "Update failed",
+            },
+            {
+                status: 500,
+            }
+        );
+    }
+}
+
+
+// ========================================
+// DELETE - Delete Product
+// ========================================
+
+export async function DELETE(req: Request) {
+    try {
+        const body = await req.json();
+
+        const { id } = body;
+
+        await pool.query(
+            `DELETE FROM product_schema WHERE id = ?`,
+            [id]
+        );
+
+        return NextResponse.json({
+            success: true,
+            message: "Product Deleted Successfully",
+        });
+
+    } catch (error) {
+        console.error("Delete product error:", error);
+
+        return NextResponse.json(
+            {
+                success: false,
+                message: "Delete Failed",
             },
             {
                 status: 500,

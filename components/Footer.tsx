@@ -10,7 +10,7 @@ export default function Footer() {
         {/* Logo Section */}
         <div>
           <Image
-            src="/logo4.png"
+            src="/logo.png"
             height={160}
             width={160}
             alt="ShopNest Logo"

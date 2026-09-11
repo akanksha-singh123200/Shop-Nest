@@ -40,7 +40,7 @@ export default function Products() {
 
     const fetchCategories = async () => {
         try {
-            const response = await fetch("/api/categories");
+            const response = await fetch("/api/admin/categories");
             const data = await response.json();
 
             if (data.categories) {

@@ -79,3 +79,34 @@ export async function POST(req:Request){
   }
 
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const body = await req.json();
+
+    const { id } = body;
+
+    await pool.query(
+      `DELETE FROM trendings WHERE id = ?`,
+      [id]
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: "Trending Product Deleted Successfully",
+    });
+
+  } catch (error) {
+    console.error("Delete user error:", error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Delete Failed",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}

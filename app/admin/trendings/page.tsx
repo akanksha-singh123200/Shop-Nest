@@ -10,6 +10,43 @@ export default function Trending() {
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState<number | null>(null);
 
+
+  const DeleteProductFormTrending = async (product: any) => {
+    try {
+      const confirmDelete = confirm(
+        `Are you sure you want to remove "${product.title}" from trending?`
+      );
+
+      if (!confirmDelete) return;
+
+      const response = await fetch("/api/admin/trending", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: product.trending_id,
+        }),
+      });
+
+      const data = await response.json();
+
+      alert(data.message);
+
+      if (data.success) {
+        fetchProducts();
+      }
+    } catch (error) {
+      console.error("Error deleting trending product:", error);
+      alert("Something went wrong");
+    }
+  };
+
+
+
+
+
+
   // --------------------------------
   // Add Product To Trending
   // --------------------------------
@@ -270,11 +307,10 @@ export default function Trending() {
                                 item.is_trending === 1 ||
                                 adding === item.id
                               }
-                              className={`rounded-lg px-4 py-2 text-xs font-semibold transition active:scale-95 ${
-                                item.is_trending === 1
+                              className={`rounded-lg px-4 py-2 text-xs font-semibold transition active:scale-95 ${item.is_trending === 1
                                   ? "cursor-not-allowed bg-gray-100 text-gray-400"
                                   : "bg-[#E39F7F] text-white hover:bg-[#d98968]"
-                              }`}
+                                }`}
                             >
                               {adding === item.id
                                 ? "Adding..."
@@ -285,17 +321,13 @@ export default function Trending() {
 
                             {/* Delete */}
                             <button
+                              onClick={() => DeleteProductFormTrending(item)}
                               className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-xs font-semibold text-red-500 transition hover:bg-red-500 hover:text-white active:scale-95"
                             >
                               Delete
                             </button>
 
-                            {/* Update */}
-                            <button
-                              className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-500 transition hover:bg-blue-500 hover:text-white active:scale-95"
-                            >
-                              Update
-                            </button>
+                           
 
                           </div>
 
