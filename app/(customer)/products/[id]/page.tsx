@@ -37,7 +37,7 @@ export default async function ProductDetails({ params }: Props) {
     // =========================
 
     const ratingResponse = await fetch(
-        `http://localhost:3000/api/reviews/ratings?product_id=${product.id}`,
+        `http://localhost:3000/api/admin/reviews/ratings?product_id=${product.id}`,
         {
             cache: "no-store",
         }
@@ -64,7 +64,7 @@ export default async function ProductDetails({ params }: Props) {
     }
 
     return (
-        <div className="max-w-6xl mx-auto p-10">
+        <div className="max-w-6xl mx-auto items-center justify-center min-h-screen px-10 py-20">
 
             {/* =========================
                 PRODUCT DETAILS
@@ -134,6 +134,10 @@ export default async function ProductDetails({ params }: Props) {
                     <p className="mt-3">
                         Stock : {product.stock}
                     </p>
+
+                    <button className="mt-5 bg-[#F06A55] text-white px-4 py-2 rounded hover:bg-[#d95c4a]">
+                        Buy Now
+                    </button>
 
                 </div>
             </div>

@@ -38,7 +38,7 @@ export default function ReviewForm({ productId }: Props) {
             setReviewsLoading(true);
 
             const response = await fetch(
-                `/api/reviews/CustomerReview?product_id=${productId}`,
+                `/api/admin/reviews/CustomerReview?product_id=${productId}`,
                 {
                     cache: "no-store",
                 }
@@ -85,7 +85,7 @@ export default function ReviewForm({ productId }: Props) {
             setLoading(true);
             setMessage("");
 
-            const response = await fetch("/api/reviews", {
+            const response = await fetch("/api/admin/reviews", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -126,7 +126,7 @@ export default function ReviewForm({ productId }: Props) {
             ========================== */}
 
             {!isOpen && (
-                <div className="mb-8">
+                <div className="">
                     {/* =========================
                         CUSTOMER REVIEWS
                     ========================== */}
@@ -141,12 +141,18 @@ export default function ReviewForm({ productId }: Props) {
                         </p>
                     ) : (
                         <div className="space-y-4">
+                            <h3 className="font-semibold">
+                                Customer Reviews
+
+                            </h3>
+
                             {reviews.map((review) => (
                                 <div
                                     key={review.id}
                                     className="border rounded-xl p-4"
                                 >
                                     {/* Customer Name */}
+
 
                                     <h3 className="font-semibold">
                                         {review.name}
@@ -218,7 +224,7 @@ export default function ReviewForm({ productId }: Props) {
                             TITLE
                         ========================== */}
 
-                        <h2 className="text-5xl font-bold mb-6 pr-10">
+                        <h2 className="text-3xl font-bold mb-6 pr-10">
                             Customer Reviews & Ratings
                         </h2>
 
@@ -255,11 +261,10 @@ export default function ReviewForm({ productId }: Props) {
                                                     onClick={() =>
                                                         setRating(star)
                                                     }
-                                                    className={`text-3xl ${
-                                                        star <= rating
+                                                    className={`text-3xl ${star <= rating
                                                             ? "text-yellow-400"
                                                             : "text-gray-300"
-                                                    }`}
+                                                        }`}
                                                 >
                                                     ★
                                                 </button>
