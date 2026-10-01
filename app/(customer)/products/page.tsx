@@ -29,6 +29,64 @@ function ProductsContent() {
 
     const router = useRouter();
 
+
+
+    // =========================
+    // Buy now button code for navigate to checkout page
+    // =========================
+
+    const buyNowClick = async (productId: number) => {
+        try {
+            const response = await fetch(
+                `/api/checkout?product_id=${productId}`,
+                {
+                    method: "GET",
+                    credentials: "include",
+                    cache: "no-store",
+                }
+            );
+
+            const data = await response.json();
+
+            console.log("Checkout API Response:", data);
+
+            // User is not logged in
+            if (response.status === 401 || data.loggedIn === false) {
+                alert("Please login first");
+                return;
+            }
+
+            // Any other error
+            if (!response.ok || !data.success) {
+                alert(data.message || "Something went wrong");
+                return;
+            }
+
+            // User is logged in
+            const checkoutUrl = `/checkout?product_id=${productId}`;
+
+            console.log("Checkout URL:", checkoutUrl);
+
+            window.location.href = checkoutUrl;
+
+        } catch (error) {
+            console.error("Buy Now Error:", error);
+            alert("Something went wrong. Please try again.");
+        }
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
     // =========================
     // GET PRODUCT RATINGS
     // =========================
@@ -220,7 +278,7 @@ function ProductsContent() {
                 } else {
                     alert(
                         data.message ||
-                            "Unable to remove from wishlist"
+                        "Unable to remove from wishlist"
                     );
                 }
             }
@@ -252,7 +310,7 @@ function ProductsContent() {
                 } else {
                     alert(
                         data.message ||
-                            "Unable to add to wishlist"
+                        "Unable to add to wishlist"
                     );
                 }
             }
@@ -290,7 +348,7 @@ function ProductsContent() {
             } else {
                 alert(
                     data.message ||
-                        "Unable to add product to cart"
+                    "Unable to add product to cart"
                 );
             }
         } catch (error) {
@@ -530,9 +588,9 @@ function ProductsContent() {
                                                             key={star}
                                                             className={
                                                                 star <=
-                                                                Math.round(
-                                                                    averageRating
-                                                                )
+                                                                    Math.round(
+                                                                        averageRating
+                                                                    )
                                                                     ? "text-yellow-400 text-xl"
                                                                     : "text-gray-300 text-xl"
                                                             }
@@ -555,18 +613,29 @@ function ProductsContent() {
                                         </div>
 
                                         {/* Add To Cart */}
+                                        <div className="flex gap-3">
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    setAddToCart(
+                                                        product.id
+                                                    )
+                                                }
+                                                className="w-full mt-4 py-3 rounded-full bg-[#E39F7F] text-black font-bold hover:bg-[#d98968] transition"
+                                            >
+                                                Add to Cart
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => buyNowClick(product.id)}
+                                                className="w-full mt-4 py-3 rounded-full bg-green-500 text-white font-bold hover:bg-green-600 transition"
+                                            >
+                                                Buy Now
+                                            </button>
 
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                setAddToCart(
-                                                    product.id
-                                                )
-                                            }
-                                            className="w-full mt-4 py-3 rounded-full bg-[#E39F7F] text-white font-bold hover:bg-[#d98968] transition"
-                                        >
-                                            Add to Cart
-                                        </button>
+                                        </div>
+
+
 
                                     </div>
 
