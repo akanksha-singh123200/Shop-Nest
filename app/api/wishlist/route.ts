@@ -1,107 +1,160 @@
 import { NextResponse } from "next/server";
 import pool from "@/lib/db";
+import jwt from "jsonwebtoken";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { userID, productID } = body;
-    console.log("UserID", userID);
-    console.log("ProductID", productID);
 
-    const [users]: any = await pool.query(
-      "select * from user where id=?",
-      [userID]
-    );
-    const [products]: any = await pool.query(
-      "SELECT * FROM product_schema WHERE id = ?",
-      [productID]
-    );
-    const [wishlist]: any = await pool.query(
-      "select * from wishlist where product_id=? and user_id=? ",
-      [userID, productID]
-    );
-    if (wishlist.length === 0) {
-      await pool.query(
-        "INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)",
-        [userID, productID]
+    let userId = null;
+
+    // ==========================
+    // GOOGLE LOGIN
+    // ==========================
+    const session = await getServerSession(authOptions);
+
+    if (session?.user?.email) {
+      const [users]: any = await pool.query(
+        "SELECT id FROM user WHERE email=?",
+        [session.user.email]
       );
 
+      if (users.length > 0) {
+        userId = users[0].id;
+      }
+    }
 
+    // ==========================
+    // NORMAL LOGIN
+    // ==========================
+    if (!userId) {
+      const token = req.headers.get("cookie")
+        ?.split("; ")
+        .find((c) => c.startsWith("token="))
+        ?.split("=")[1];
+
+      if (token) {
+        const decoded: any = jwt.verify(
+          token,
+          process.env.JWT_SECRET!
+        );
+
+        userId = decoded.id;
+      }
+    }
+
+    // ==========================
+    // LOGIN CHECK
+    // ==========================
+    if (!userId) {
       return NextResponse.json({
-        success: true,
-        message: "Product added to wishlist",
+        success: false,
+        loggedIn: false,
+        message: "Please login first",
+      }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const { productID } = body;
+
+    // ==========================
+    // ALREADY EXISTS CHECK
+    // ==========================
+    const [wishlist]: any = await pool.query(
+      "SELECT * FROM wishlist WHERE user_id=? AND product_id=?",
+      [userId, productID]
+    );
+
+    if (wishlist.length > 0) {
+      return NextResponse.json({
+        success: false,
+        message: "Product already added in wishlist",
       });
     }
-    else {
-      if (wishlist.length > 0) {
-        return NextResponse.json({
-          success: false,
-          message: "Product already exists in wishlist",
-        });
+
+    // ==========================
+    // INSERT
+    // ==========================
+    await pool.query(
+      "INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)",
+      [userId, productID]
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: "Product added to wishlist",
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    return NextResponse.json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+}
+
+export async function GET(req: Request) {
+  try {
+
+    let userId = null;
+
+    const session = await getServerSession(authOptions);
+
+    if (session?.user?.email) {
+      const [users]: any = await pool.query(
+        "SELECT id FROM user WHERE email=?",
+        [session.user.email]
+      );
+
+      if (users.length > 0) {
+        userId = users[0].id;
       }
-
-
     }
 
+    if (!userId) {
+      const token = req.headers.get("cookie")
+        ?.split("; ")
+        .find((c) => c.startsWith("token="))
+        ?.split("=")[1];
 
-    // return NextResponse.json({
-    //     success: true,
-    //     message: "Success",
-    //     user: users[0],
-    //     product: products[0],
-    // });
+      if (token) {
+        const decoded: any = jwt.verify(
+          token,
+          process.env.JWT_SECRET!
+        );
 
-  }
-  catch (error) {
-    return NextResponse.json({
-      success: false,
-      message: "Invalid",
+        userId = decoded.id;
+      }
+    }
 
-    });
+    if (!userId) {
+      return NextResponse.json({
+        success: false,
+        wishlist: [],
+      });
+    }
 
-  }
-
-}
-export async function GET() {
-  try {
     const [wishlist]: any = await pool.query(
-      `SELECT * FROM wishlist`
+      `
+      SELECT product_id
+      FROM wishlist
+      WHERE user_id=?
+      `,
+      [userId]
     );
 
     return NextResponse.json({
       success: true,
-      message: "Wishlist fetched successfully",
-      wishlist,
+      wishlist:wishlist[0]
     });
 
   } catch (error) {
     return NextResponse.json({
       success: false,
-      message: "Something went wrong",
-    });
-  }
-}
-
-export async function DELETE(req: Request) {
-  try {
-    const body = await req.json();
-
-    const { userID, productID } = body;
-
-    await pool.query(
-      "DELETE FROM wishlist WHERE user_id=? AND product_id=?",
-      [userID, productID]
-    );
-
-    return NextResponse.json({
-      success: true,
-      message: "Product removed from wishlist",
-    });
-
-  } catch (error) {
-    return NextResponse.json({
-      success: false,
-      message: "Something went wrong",
+     
     });
   }
 }

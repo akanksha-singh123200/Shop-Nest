@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 function ProductsContent() {
     const [products, setProducts] = useState<any[]>([]);
@@ -15,6 +16,9 @@ function ProductsContent() {
 
     const [wishlist, setWishlist] = useState<number[]>([]);
     const searchParams = useSearchParams();
+    const pathname = usePathname();
+
+    const isProductsPage = pathname === "/products";
 
     // =========================
     // RATINGS
@@ -365,7 +369,7 @@ function ProductsContent() {
     // };
 
     return (
-        <div className="min-h-screen bg-[#fff8f3]">
+        <div className="min-h-screen bg-[#fff8f3] pt-22">
 
             {/* =========================
                 FILTER SECTION
@@ -450,17 +454,50 @@ function ProductsContent() {
                 </button>
 
             </div>
-            */}
+    
+{/* =========================
+    PRODUCT LIST
+========================== */}
 
-            {/* =========================
-                PRODUCT LIST
-            ========================== */}
+            <section className="max-w-7xl mx-auto px-4 pt-12 pb-20">
 
-            <section className="max-w-7xl mx-auto px-4 pb-20">
 
-                <h1 className="font-playfair text-5xl text-center font-bold">
-                    Featured Products
-                </h1>
+                <header
+                    className={`top-25 left-0 w-full z-50 ${isProductsPage ? "mb-0" : ""
+                        }`}
+                >
+                    {/* Existing navbar code */}
+                    {/* Heading */}
+                    <div className="mb-14 text-center">
+
+                        {/* Small Badge */}
+                        <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#F06A55]/20 bg-white px-5 py-2 font-playfair text-sm font-medium text-[#F06A55] shadow-sm">
+                            ✨ Handpicked Deals for You
+                        </span>
+
+                        {/* Main Heading */}
+                        <h2 className="font-playfair text-4xl font-bold tracking-tight text-gray-900 md:text-5xl">
+                            Featured{" "}
+                            <span className="text-[#F06A55]">
+                                Products
+                            </span>
+                        </h2>
+
+                        {/* Description */}
+                        <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-gray-500 md:text-base">
+                            Discover the latest favorites and shop the products
+                            everyone is loving right now.
+                        </p>
+
+                    </div>
+
+
+                </header>
+
+
+
+
+
 
                 {products.length === 0 ? (
                     <div className="text-center py-20">

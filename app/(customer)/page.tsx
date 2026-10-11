@@ -76,7 +76,7 @@ export default async function Customer() {
 
         {/* Navbar */}
         <div className="relative z-20">
-       
+
           <Navbar />
         </div>
 
@@ -100,12 +100,12 @@ export default async function Customer() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link   href="/products">
-              <button className="rounded-full bg-black px-7 py-3.5  text-white transition hover:bg-[#F06A55]">
-                Shop Now →
-              </button>
+              <Link href="/products">
+                <button className="rounded-full bg-black px-7 py-3.5  text-white transition hover:bg-[#F06A55]">
+                  Shop Now →
+                </button>
               </Link>
-              
+
 
               <button className="rounded-full border border-black/70 bg-white/10 px-7 py-3.5 font-semibold text-black backdrop-blur-sm transition hover:bg-[#F06A55] hover:text-black">
                 Explore Products
@@ -117,7 +117,7 @@ export default async function Customer() {
       </section>
 
 
-      
+
       <Products />
 
       <Trending />
@@ -125,7 +125,7 @@ export default async function Customer() {
       <SpecialOffers />
 
       <WhyChooseUs />
-           <BackToTop />
+      <BackToTop />
       {/* <CustomerFeedback /> */}
 
       <Footer />

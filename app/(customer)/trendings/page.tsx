@@ -4,10 +4,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Trending() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
+
+  const isProductsPage = pathname === "/trendings";
+
 
   const [ratings, setRatings] = useState<{
     [key: number]: {
@@ -138,10 +143,16 @@ export default function Trending() {
   }
 
   return (
-    <section className="min-h-screen bg-[#fff8f3] py-16">
+    <section className="min-h-screen bg-[#fff8f3] py-16 pt-22">
       <div className="mx-auto max-w-7xl px-4">
 
-        {/* Heading */}
+
+
+        <header
+          className={`top-25 left-0 w-full z-50 ${isProductsPage ? "mb-0" : ""
+            }`}
+        >
+          {/* Heading */}
         <div className="mb-12 text-center">
           <span className="mb-4 inline-block rounded-full bg-[#E39F7F]/45 px-5 py-2 font-playfair text-3xl font-medium text-black">
             ✨ TRENDING
@@ -155,6 +166,20 @@ export default function Trending() {
             Discover the products everyone is loving right now.
           </p>
         </div>
+
+
+        </header>
+
+
+
+
+
+
+
+
+
+
+      
 
         {/* Products */}
         {products.length > 0 ? (

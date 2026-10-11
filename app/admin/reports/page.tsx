@@ -60,11 +60,11 @@ export default function Reports() {
             {reports.map((report, index) => (
               <div
                 key={index}
-                className="flex h-[190px] cursor-pointer flex-col items-center justify-center rounded-xl border border-gray-200 bg-white shadow-[0_3px_10px_rgba(0,0,0,0.15)] transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                className="flex h-47.5 cursor-pointer flex-col items-center justify-center rounded-xl border border-gray-200 bg-white shadow-[0_3px_10px_rgba(0,0,0,0.15)] transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
               >
                 {/* Icon Circle */}
                 <div
-                  className={`flex h-[108px] w-[108px] items-center justify-center rounded-full ${report.bg}`}
+                  className={`flex h-27 w-27 items-center justify-center rounded-full ${report.bg}`}
                 >
                   <span className="text-[52px]">
                     {report.icon}

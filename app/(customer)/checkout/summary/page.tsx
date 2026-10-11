@@ -786,19 +786,7 @@ export default function CheckoutSummary() {
 
                                     </div>
 
-                                    {/* EDIT ADDRESS */}
-
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            shippingAddress(
-                                                Number(user?.id)
-                                            )
-                                        }
-                                        className="mt-5 text-sm font-medium text-[#F06A55] hover:underline"
-                                    >
-                                        Edit Shipping Address
-                                    </button>
+                                    
 
                                 </div>
                             ) : (

@@ -173,7 +173,7 @@ export default function Orders() {
       {/* =====================================================
           MAIN CONTENT
       ===================================================== */}
-      <div className="ml-64 min-h-screen bg-[#FFF8F3] px-6 py-22 pt-20 md:px-8 md:py-27">
+      <div className="ml-64 min-h-screen px-6 py-22 pt-20 md:px-8 md:py-27">
         <div className="mx-auto max-w-7xl">
 
           {/* =====================================================
