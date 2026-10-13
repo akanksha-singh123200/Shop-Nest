@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import ReviewForm from "./reviewform/page";
-import ProductActions from "./ProductActions/page";
+import ReviewForm from "./reviewform";
+import ProductActions from "./ProductActions";
 
 type Props = {
   params: Promise<{

@@ -4,7 +4,7 @@ import pool from "@/lib/db";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 
 // =====================================================
 // POST - ADD TO CART

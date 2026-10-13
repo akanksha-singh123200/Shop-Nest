@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import jwt from "jsonwebtoken";
 
 import pool from "@/lib/db";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 
 
 /*
