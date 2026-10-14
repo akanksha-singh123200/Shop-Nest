@@ -8,6 +8,7 @@ import { authOptions } from "@/lib/authOptions";
 export async function POST(req: Request) {
   try {
 
+    
     let userId = null;
 
     // ==========================
