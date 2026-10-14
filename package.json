@@ -2,6 +2,11 @@
   "name": "shop_nest",
   "version": "0.1.0",
   "private": true,
+  "allowScripts": {
+    "bcrypt@6.0.0": true,
+    "sharp@0.34.5": true,
+    "unrs-resolver@1.12.2": true
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
