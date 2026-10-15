@@ -39,6 +39,7 @@ export default function AddtoCart() {
         }),
       });
 
+      
       fetchCart();
     } catch (error) {
       console.log(error);
