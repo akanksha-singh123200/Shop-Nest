@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 const faqs = [
+  
   {
     question: "How can I place an order?",
     answer:
